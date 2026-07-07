@@ -1,0 +1,120 @@
+version: 2
+config:
+  dev_branch_name: dev
+  slack_channel: thanhnguyen34
+  slack_notify: true
+  no_cache: true
+deployment_config:
+  dev:
+    replicaCount: 1
+    ingress:
+      hosts:
+      - host: thanhnguyen34.dev.tiki.services
+        paths:
+        - path: /
+          port: 80
+  prod:
+    replicaCount: 1
+    ingress:
+      enable: true
+      annotations:
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+      hosts:
+      - host: thanhnguyen34.tiki.services
+        paths:
+        - path: /
+          port: 80
+      tls:
+      - hosts:
+        - thanhnguyen34.tiki.services
+        secretName: tls-thanhnguyen34.tiki.services
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    livenessProbe:
+      httpGet:
+        path: /healthz
+        port: 8080
+      initialDelaySeconds: 10
+      periodSeconds: 15
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 10
+      eventDoubleDays:
+        enabled: true
+        platform: tiki
+        desiredReplicas: 2
+      metrics:
+        - resource:
+            name: cpu
+            target:
+              averageUtilization: 95
+              type: Utilization
+          type: Resource
+        - resource:
+            name: memory
+            target:
+              averageUtilization: 95
+              type: Utilization
+          type: Resource
+jobs:
+  smoke_test:
+    steps:
+    - run:
+        name: Check Go syntax
+        command: go build -o /dev/null ./...
+  build_docker:
+    steps:
+    - build_image:
+        buildkit: true
+  publish_docker:
+    steps:
+    - push_image
+  deploy_dev:
+    steps:
+    - deploy_dev:
+        cluster: dev
+        namespace: infras
+        deployment_config: dev
+        argocd_pipeline: generic-v2
+        workload: thanhnguyen34
+  deploy_production:
+    steps:
+    - deploy_production:
+        cluster: fke-tiki-data
+        namespace: default
+        deployment_config: prod
+        argocd_pipeline: generic-v2
+        workload: thanhnguyen34
+workflows:
+  jenkins_pipeline:
+    jobs:
+    - smoke_test
+    - build_docker:
+        requires:
+        - smoke_test
+    - publish_docker:
+        filters:
+          branches:
+            only:
+            - master
+            - dev
+            - staging
+        requires:
+        - build_docker
+    - deploy_dev:
+        filters:
+          branches:
+            only:
+            - master
+        requires:
+        - publish_docker
+    - deploy_production:
+        filters:
+          branches:
+            only:
+            - master
+        requires:
+        - publish_docker
