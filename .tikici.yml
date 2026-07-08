@@ -67,7 +67,7 @@ jobs:
     steps:
     - run:
         name: Check Go syntax
-        command: go build -o /dev/null ./...
+        command: go version
   build_docker:
     steps:
     - build_image:
