@@ -62,7 +62,7 @@ deployment_config:
 jobs:
   smoke_test:
     docker:
-      - image:
+    - image:
         name: golang:1.22-alpine
     steps:
     - run:
