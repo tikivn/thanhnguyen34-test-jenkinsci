@@ -1,2 +1,2 @@
-@Library('t-jenkins-shared-library@thanhnguyen34-test') _
+@Library('t-jenkins-shared-library@master') _
 tikiCI(yamlName: '.tikici.yml')
