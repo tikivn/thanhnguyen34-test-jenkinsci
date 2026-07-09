@@ -60,6 +60,14 @@ deployment_config:
               type: Utilization
           type: Resource
 jobs:
+  smoke_test:
+    docker:
+    - image:
+        name: golang:1.22-alpine
+    steps:
+    - run:
+        name: Check Go syntax
+        command: go version && go build -o /dev/null ./...
   build_docker:
     steps:
     - build_image:
@@ -86,7 +94,10 @@ jobs:
 workflows:
   jenkins_pipeline:
     jobs:
-    - build_docker
+    - smoke_test
+    - build_docker:
+        requires:
+        - smoke_test
     - publish_docker:
         filters:
           branches:
