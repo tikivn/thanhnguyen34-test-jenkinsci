@@ -83,7 +83,7 @@ jobs:
     steps:
     - deploy_dev:
         cluster: dev
-        namespace: infras
+        namespace: default
         deployment_config: dev
         argocd_pipeline: generic-v2
         workload: thanhnguyen34
