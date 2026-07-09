@@ -115,7 +115,7 @@ workflows:
         filters:
           branches:
             only:
-            - main
+            - dev
         requires:
         - publish_docker
     - deploy_production:
