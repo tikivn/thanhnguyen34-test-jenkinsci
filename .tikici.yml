@@ -91,7 +91,7 @@ workflows:
         filters:
           branches:
             only:
-            - master
+            - main
             - dev
             - staging
         requires:
@@ -100,13 +100,13 @@ workflows:
         filters:
           branches:
             only:
-            - master
+            - main
         requires:
         - publish_docker
     - deploy_production:
         filters:
           branches:
             only:
-            - master
+            - main
         requires:
         - publish_docker
