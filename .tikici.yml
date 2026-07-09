@@ -67,11 +67,11 @@ jobs:
     steps:
     - run:
         name: Check Go syntax
-        command:
-          go version && \
-          GOCACHE=/tmp/go-cache && \
-          GOPATH=/tmp/go && \
-          go build -o /dev/null ./...
+        command: |
+          go version
+          mkdir -p /tmp/go-cache /tmp/go
+          GOCACHE=/tmp/go-cache GOPATH=/tmp/go go build -o /dev/null ./...
+          GOCACHE=/tmp/go-cache GOPATH=/tmp/go go vet ./...
   build_docker:
     steps:
     - build_image:
