@@ -67,7 +67,10 @@ jobs:
     steps:
     - run:
         name: Check Go syntax
-        command: go version && go build -o /dev/null ./...
+        command:
+          export GOCACHE=/tmp/go-cache 
+          export GOPATH=/tmp/go
+          go build -o /dev/null ./...
   build_docker:
     steps:
     - build_image:
