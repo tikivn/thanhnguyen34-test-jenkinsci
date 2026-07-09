@@ -63,7 +63,7 @@ jobs:
   smoke_test:
     docker:
     - image:
-        name: golang:1.22-alpine
+        name: golang:1.22
     steps:
     - run:
         name: Check Go syntax
