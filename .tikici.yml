@@ -3,7 +3,7 @@ config:
   dev_branch_name: dev
   slack_channel: thanhnguyen34
   slack_notify: true
-  no_cache: false
+  no_cache: true
 deployment_config:
   dev:
     replicaCount: 1
